@@ -85,7 +85,7 @@ def invert_fisher(dico_fisher):
             print('problem')
             import pdb; pdb.set_trace()
         assert mat.shape[0]==mat.shape[1], 'cannot invert a non square matrix'
-        noise = np.diag([1e-10]*n)
+        noise = np.diag([10**(-20)]*n)
         return np.linalg.inv(mat+noise)[None,:,:]
     
     for key in dico_fisher.keys():

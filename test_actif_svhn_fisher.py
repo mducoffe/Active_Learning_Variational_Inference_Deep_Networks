@@ -292,16 +292,18 @@ def saving(model, labelled_data, unlabelled_data, test_data, repo, filename):
 
 
 #%%
-def active_learning_fisher(num_sample=32, percentage=0.3, 
+def active_learning_fisher(num_sample=500, percentage=0.3, 
                     nb_exp=0, repo='test', filename='test.csv'):
     
     # create a model and do a reinit function
-    model, labelled_data, unlabelled_data, test_data = loading(repo, 'tmp_cifar.pkl', num_sample)
+    option='fisher'
+    tmp_filename = 'tmp_SVHN{}.pkl'.format(option)
+    model, labelled_data, unlabelled_data, test_data = loading(repo, tmp_filename, num_sample)
     kfac = KFAC(model)
     dico = kfac.build_Fisher()
     f_multiply = multiply()
     batch_size = 32
-    nb_query=200
+    nb_query=10
     percentage_data = len(labelled_data[0])
     N_pool = len(labelled_data[0]) + len(unlabelled_data[0])
     print('START')
@@ -323,7 +325,7 @@ def active_learning_fisher(num_sample=32, percentage=0.3,
         print('SUCCEED')
         evaluate(model, percentage_data, test_data, nb_exp, repo, filename)
         # SAVE
-        saving(model, labelled_data, unlabelled_data, test_data, repo, 'tmp_cifar.pkl')
+        saving(model, labelled_data, unlabelled_data, test_data, repo, tmp_filename)
         #print('SUCEED')
         #print('step B')
         i=gc.collect()
@@ -342,7 +344,7 @@ if __name__=="__main__":
     
     parser = argparse.ArgumentParser(description='Active Learning on MNIST')
 
-    parser.add_argument('--id_experiment', type=int, default=2, help='id number of experiment')
+    parser.add_argument('--id_experiment', type=int, default=3, help='id number of experiment')
     parser.add_argument('--repo', type=str, default='.', help='repository for log')
     parser.add_argument('--filename', type=str, default='cifar_iclr_fisher', help='csv filename')
     args = parser.parse_args()
